@@ -9,7 +9,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://localhost:8888", "http://localhost:4200")
+                .allowedOrigins("https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://207.180.233.141:8888", "http://localhost:8888", "http://localhost:4200")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);

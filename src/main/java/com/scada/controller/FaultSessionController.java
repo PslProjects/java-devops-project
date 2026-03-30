@@ -19,7 +19,8 @@ import java.util.*;
         "https://scada.pratikshat.com",
         "http://198.7.114.147:8888",
         "http://localhost:8888",
-        "http://localhost:4200"
+        "http://localhost:4200",
+        "http://207.180.233.141:8888"
 })
 public class FaultSessionController {
 
@@ -102,7 +103,6 @@ public SseEmitter connect(@PathVariable String userId) {
                 }
             }
         }
-
         return ResponseEntity.ok(sessions);
     }
 
@@ -205,7 +205,4 @@ public SseEmitter connect(@PathVariable String userId) {
                 "sessionId", sessionId
         ));
     }
-
-
-    
 }

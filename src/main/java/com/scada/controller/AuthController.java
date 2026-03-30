@@ -22,7 +22,7 @@ import com.scada.sess.AdminSessionTracker;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://localhost:8888", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://207.180.233.141:8888", "http://localhost:8888", "http://localhost:4200"})
 public class AuthController {
 
     @Autowired

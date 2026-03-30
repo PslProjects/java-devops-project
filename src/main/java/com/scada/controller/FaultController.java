@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://localhost:8888", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://scada.pratikshat.com", "http://198.7.114.147:8888", "http://207.180.233.141:8888", "http://localhost:8888", "http://localhost:4200"})
 @RequestMapping("/fault")
 public class FaultController {
 

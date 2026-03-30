@@ -1,9 +1,11 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
 COPY target/*.jar app.jar
 
-EXPOSE 8888
+EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", \
+  "--spring.config.location=/app/config/application.properties", \
+  "--server.port=8888"]

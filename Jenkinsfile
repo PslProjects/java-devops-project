@@ -1,33 +1,83 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE  = "admin/springboot-app"
+        APP_SERVER_IP = "54.79.252.162"
+        APP_USER      = "ubuntu"
+    }
+
     stages {
 
-        stage('Clone Code') {
+        stage('Code Pull') {
             steps {
-                git 'https://github.com/PslProjects/java-devops-project'
+                echo 'GitHub se code aa raha hai...'
+                checkout scm
             }
         }
 
-        stage('Build Jar') {
+        stage('JAR Build') {
             steps {
-                sh './mvnw clean package'
+                echo 'Maven se JAR ban raha hai...'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Image Build') {
             steps {
-                sh 'docker build -t scada-app .'
+                echo 'Docker image ban rahi hai...'
+                sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
             }
         }
 
-        stage('Run Container') {
+        stage('Docker Hub Push') {
             steps {
-                sh 'docker stop scada-container || true'
-                sh 'docker rm scada-container || true'
-                sh 'docker run -d -p 8888:8888 --name scada-container scada-app'
+                echo 'Docker Hub pe push ho raha hai...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
+                }
             }
         }
 
+        stage('App Server pe Deploy') {
+            steps {
+                echo 'App server pe deploy ho raha hai...'
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'app-server-ssh',
+                    keyFileVariable: 'SSH_KEY'
+                )]) {
+                    sh """
+                        ssh -i ${SSH_KEY} \
+                          -o StrictHostKeyChecking=no \
+                          ${APP_USER}@${APP_SERVER_IP} '
+                            docker pull ${DOCKER_IMAGE}:latest &&
+                            docker stop springboot-app || true &&
+                            docker rm   springboot-app || true &&
+                            docker run -d \
+                              --name springboot-app \
+                              --restart always \
+                              -p 8080:8080 \
+                              -v /home/ubuntu/config:/app/config \
+                              ${DOCKER_IMAGE}:latest
+                          '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline successful! App live hai.'
+        }
+        failure {
+            echo 'Kuch gadbad hua — logs dekho.'
+        }
     }
 }
