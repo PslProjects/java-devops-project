@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE  = "admin/springboot-app"
+        DOCKER_IMAGE  = "krishna07k/springboot-app"
         APP_SERVER_IP = "54.79.252.162"
         APP_USER      = "ubuntu"
     }
